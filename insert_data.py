@@ -183,7 +183,7 @@ def insert_chatacter(field,value,sy):
         cursor.close()
         conn.close()
 
-def alter_pdf_pg_field(field):
+def alter_pdf_field(field):
     result = select_data.query_field()
     if field in result:
         print(field, "is in the list.")
@@ -204,7 +204,7 @@ def alter_pdf_pg_field(field):
             cursor.close()
             conn.close()
 
-def insert_pdf_pg_data(field,value,sy):
+def insert_pdf_data(field,value,sy):
     query = 'update plant_usda set %s = \'%s\' WHERE symbol = \'%s\''%(field,value,sy)
     try:
         db_config = read_db_config()
@@ -232,5 +232,5 @@ def test():
     print(string)
 
 if __name__ == '__main__':
-    alter_pdf_pg_field("nb")
-    insert_pdf_pg_data("nb", "3324fg", "ABAM")
+    alter_pdf_pg_field("pg_uses")
+    insert_pdf_pg_data("pg_uses", "3324fg", "ABAM")

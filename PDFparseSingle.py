@@ -5,8 +5,8 @@ import insert_data
 
 plant_guide = select_data.query_pdflink()
 
-soup = BeautifulSoup(open("E:\pdf\p\pg_abco.html",encoding= 'utf-8'),"html.parser")
-plant = 'ABCO'
+soup = BeautifulSoup(open("E:\pdf\p\cs_astr.html",encoding= 'utf-8'),"html.parser")
+plant = 'ASTR'
 print(plant)
 #print(soup.prettify())
 
@@ -29,35 +29,30 @@ for i in result:
 #print(value)
 
 field0 = []
-field = []
 result2 = soup.find_all(style = sty)
 for i in result2:
     i = i.get_text()
     if i!='\n':
         i = i.replace('\n','')
-        field0.append(i)
-        '''
-        i = i[:-1]
-        i = i.replace(" ","_").replace(":","_").replace("/","_").replace("(","_").replace(")","_").replace(",","_").replace("°","_")
-        field.append(i)
-        '''
+        if i != '' and i!=' ' and i != 'USDA IS AN EQUAL OPPORTUNITY PROVIDER AND EMPLOYER ' and i != 'Page: 1, 2, 3' and len(i)<100:
+            field0.append(i)
 
 print(field0)
 string = ''
-list = []
+list = {}
 for i in field0:
-    if i!=field0[-1]:
+    if i =='':
+        continue
+    elif i!=field0[-1]:
         ind0=value.index(i)+1
         ind1=value.index(field0[field0.index(i)+1])
         if ind1==ind0:
             string = string + value[ind0]
-            list.append(i)
-            list.append(string)
+            list[i] = string
         else:
             for j in range(ind0,ind1):
                 string = string + value[j]
-            list.append(i)
-            list.append(string)
+            list[i] = string
 
         string =''
     else:
@@ -65,36 +60,30 @@ for i in field0:
         ind1 =value.index(value[-1])
         if ind1 == ind0:
             string = string + value[ind0]
-            list.append(i)
-            list.append(string)
+            list[i] = string
         else:
             for j in range(ind0, ind1):
                 string = string + value[j]
-            list.append(i)
-            list.append(string)
+            list[i] = string
 
         string = ''
 
-data =[]
+print(list)
 prefix ="pg_"
-field =''
+value = ''
 for i in list:
-    if list.index(i)%2==0:
+    value = list[i].replace("'", "_")
+    if i[-1]==' ':
         i = i[:-1]
-        i = i.replace(" ","_").replace(":","_").replace("/","_").replace("(","_").replace(")","_").replace(",","_").replace("°","_").replace("&","_").replace("__","_")
-        i =prefix + i
-        if i[-1]=='_':
-            i = i[:-1]
-        if len(i)>=64:
-            i = i[:-20]
-        #insert_data.alter_pdf_pg_field(i)
-        field = i
-        data.append(i)
+    i = i.replace(" ","_").replace(":","_").replace("/","_").replace("(","_").replace(")","_").replace(",","_").replace("°","_").replace("&","_").replace("__","_").replace('.','_').replace("-","_").replace("[","_").replace("]","_").lower()
+    i =prefix + i
+    if i[-1]=='_':
+        i = i[:-1]
+    if len(i)>=64:
+        i = i[:40]
+    insert_data.alter_pdf_pg_field(i)
+    insert_data.insert_pdf_pg_data(i,value,plant)
+    value = ''
 
-    elif list.index(i)%2==1:
-        i = i.replace("'","_")
-        #insert_data.insert_pdf_pg_data(field,i,plant)
-        data.append(i)
 
-print(data)
 
